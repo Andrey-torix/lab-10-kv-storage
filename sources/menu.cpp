@@ -34,23 +34,23 @@ void log(std::string mes) {
   }
 }
 void readFileFunction(std::string input_file) {
-  rocksdb::DB* db;  //ïåðåìåííàÿ äëÿ õðàíåíèÿ ÁÄ
+  rocksdb::DB* db;  //ia?aiaiiay aey o?aiaiey AA
   rocksdb::Status status;
-  rocksdb::Options options;  //îïöèè
+  rocksdb::Options options;  //iioee
   std::vector<std::string> column_families;
   std::vector<rocksdb::ColumnFamilyDescriptor> column_familiesD;
   db->ListColumnFamilies(options, input_file,
-                         &column_families);  //ñ÷èòûâàåì ñåìüè
-  while (!column_families.empty()) {  //ñîçäà¸ì äåñêðèïòîð ñåìüè
+                         &column_families);  //n?eouaaai naiue
+  while (!column_families.empty()) {  //nicaa?i aane?eioi? naiue
     std::string t1 = std::move(column_families.front());
-    log("Ñ÷èòûâàíèå äàííûõ...");
+    log("Считывание данных...");
     column_families.erase(column_families.begin());
     column_familiesD.push_back(
         rocksdb::ColumnFamilyDescriptor(t1, rocksdb::ColumnFamilyOptions()));
   }
   status = rocksdb::DB::Open(
       rocksdb::DBOptions(), input_file, column_familiesD, &idb.handles,
-      &db);  //îòêðûâàåì èñõîäíîå õðàíëèùå â ðåæèìå òîëüêî äëÿ ÷òåíèÿ
+      &db);  //ioe?uaaai enoiaiia o?aieeua a ?a?eia oieuei aey ?oaiey
   for (uint64_t i = 0; i < idb.handles.size(); i++) {
     rocksdb::Iterator* ter =
         db->NewIterator(rocksdb::ReadOptions(), idb.handles[i]);
@@ -111,7 +111,7 @@ void writeFileFunction(std::string path) {
 
 void createFileFunction(std::string path) {
   rocksdb::Status status;
-  rocksdb::Options options;  //îïöèè
+  rocksdb::Options options;  //iioee
   options.create_if_missing = true;
   options.compression = rocksdb::CompressionType::kNoCompression;
   std::vector<rocksdb::ColumnFamilyDescriptor> column_familiesD;
@@ -124,7 +124,7 @@ void createFileFunction(std::string path) {
   }
   status = rocksdb::DB::Open(options, path, &nrdb);
   if (status.ok()) {
-    log("Ôàéë ñîçäàí");
+    log("Oaee nicaai");
     status = nrdb->CreateColumnFamilies(column_familiesD, &idb.handles);
 
     log(status.ToString());
@@ -135,7 +135,7 @@ void createFileFunction(std::string path) {
     nrdb->ListColumnFamilies(options, path, &column_families);
     //std::vector<rocksdb::ColumnFamilyDescriptor> column_familiesD;
     while (!column_families.empty()) {
-      std::string t1 = column_families.back();  //èìÿ ñåìüè
+      std::string t1 = column_families.back();  //eiy naiue
       column_families.pop_back();
       // std::cout << t1 << std::endl;
       column_familiesD.push_back(
@@ -143,38 +143,22 @@ void createFileFunction(std::string path) {
     }
     status = rocksdb::DB::Open(rocksdb::DBOptions(), path, column_familiesD,
                                &handles, &nrdb);
-    log("Ñòàòóñ: " + status.ToString());
+    log("Noaoon: " + status.ToString());
   }
 }
 
 void EApplication::menu(int argc, const char** argv) {
-  m_desk.add_options()("help", "âûçîâ ñïðàâêè")(
-      "log-level", boost::program_options::value<std::string>(&log_level)
-                       ->composing()
-                       ->default_value("error"),
-      "\"info\"|\"warning\"|\"error\"")(
-      "thread-count", boost::program_options::value<int>(&thread_count)
-                          ->composing()
-                          ->default_value(std::thread::hardware_concurrency()),
-      "êîëè÷åñòâî ïîòîêîâ")("output",
-                            boost::program_options::value<std::string>(&path)
-                                ->composing()
-                                ->default_value("dbcs-storage.db"),
-                            "Ïóòü ê íîâîìó õðàíèëèùó")(
-      "input-file", boost::program_options::value<std::string>(&input_path)
-                        ->composing()
-                        ->default_value("source.db"),
-      "Ïóòü ê õðàíèëèùó");
-  p.add("input-file", -1);
-  boost::program_options::store(
-      boost::program_options::command_line_parser(argc, argv)
-          .options(m_desk)
-          .positional(p)
-          .run(),
-      m_vm);
-  boost::program_options::notify(m_vm);
-  path_to_programm = argv[0];
+    m_desk.add_options()("help", "вызов справки")
+        ("log-level", boost::program_options::value<std::string>(&log_level)->composing()->default_value("error"), "\"info\"|\"warning\"|\"error\"")
+        ("thread-count", boost::program_options::value<int>(&thread_count)->composing()->default_value(std::thread::hardware_concurrency()), "количество потоков")
+        ("output", boost::program_options::value<std::string>(&path)->composing()->default_value("dbcs-storage.db"), "Путь к новому хранилищу")
+        ("input-file", boost::program_options::value<std::string>(&input_path)->composing()->default_value("source.db"), "Путь к хранилищу");
+    p.add("input-file", -1);
+    boost::program_options::store(boost::program_options::command_line_parser(argc, argv).options(m_desk).positional(p).run(), m_vm);
+    boost::program_options::notify(m_vm);
+    path_to_programm = argv[0];
 }
+
 
 int EApplication::exec() {
   if (m_vm.count("help")) {
@@ -209,13 +193,15 @@ int EApplication::exec() {
           write[i].join();
         }
       }
-    } else {
-      std::cout << "Îøèáêà ïóòè" << std::endl;
+    }         
+   else {
+            std::cout << "Ошибка пути" << std::endl;
+        }
     }
-  } else {
-    std::cout << "Ïîæàëóéñòà, èñïîëüçóéòå --help îïöèþ äë¤ âûâîäà ñïðàâêè"
-              << std::endl;
-    return 1;
-  }
+    else {
+        std::cout << "Пожалуйста, используйте --help опцию дл¤ вывода справки"
+            << std::endl;
+        return 1;
+    }
   return 0;
 }
